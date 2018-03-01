@@ -1,0 +1,25 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Update Addon",
+            "type": "shell",
+            "command": ".\\toolbox\\updateAddon.ps1",
+            "group": "build"
+        },
+        {
+            "label": "Configure Toolbox",
+            "type": "shell",
+            "command": ".\\toolbox\\setup.ps1",
+            "group": "none"
+        },
+        {
+            "label": "Test Addon",
+            "type": "shell",
+            "command": ".\\toolbox\\updateAddon.ps1",
+            "group": "test"
+        }
+    ]
+}

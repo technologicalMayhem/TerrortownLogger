@@ -51,6 +51,7 @@ function GM:EntityTakeDamage ( target, dmginfo )
 		if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
 			playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
 		end
+		getDamageCause(dmginfo:GetAttacker(), dmginfo:GetInflictor())
 		if dmginfo:GetDamage() != 0 then
 			addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
 		elseif dmginfo:GetInflictor():IsWorld() then
@@ -114,7 +115,13 @@ function updatetimesstamp()
 	end
 	LogFile = "tttlogger/" .. loddate .. "/" .. logtime .. ".txt"
 end
-
+function getDamageCause(attacker, inflictor)
+	if string.sub( inflictor:GetClass(), 1, 7 ) == "weapon_" then
+		printinfo(inflictor:GetClass())
+	else
+		printinfo("Unrecognized Weapon: " .. inflictor:GetClass)
+	end
+end
 --Hooks
 hook.Add( "TTTBeginRound", "TTTLoggerBeginRound", onBeginRound )
 hook.Add( "TTTOrderedEquipment", "tttloggerTTTOrderedEquipment", onTTTOrderedEquipment )
