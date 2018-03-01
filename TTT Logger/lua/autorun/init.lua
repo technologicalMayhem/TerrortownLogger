@@ -1,7 +1,6 @@
 --ConVars
 CreateConVar("tttlogger_enabled", 0, 256, "Enables the TTTLogger.")
 CreateConVar("tttlogger_debug", 0, 256, "Enables Debug Mode.")
-
 --Vars
 local GM = GAMEMODE
 local Timestamp = os.time()
