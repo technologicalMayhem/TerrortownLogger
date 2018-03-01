@@ -1,0 +1,12 @@
+{
+   "title":"TTT Logger",
+   "type":"ServerContent",
+   "tag":[
+      "tool"
+   ],
+   "ignore":[
+      "*.psd",
+      "*.vcproj",
+      "*.svn*"
+   ]
+}
