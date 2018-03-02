@@ -53,7 +53,7 @@ function GM:EntityTakeDamage ( target, dmginfo )
 		if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
 			playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
 		end
-		--getDamageCause(dmginfo:GetAttacker(), dmginfo:GetInflictor())
+		getDamageCause(dmginfo)
 		if dmginfo:GetDamage() != 0 then
 			addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
 		elseif dmginfo:GetInflictor():IsWorld() then
@@ -117,11 +117,11 @@ function updatetimesstamp()
 	end
 	LogFile = "tttlogger/" .. loddate .. "/" .. logtime .. ".txt"
 end
-function getDamageCause(attacker, inflictor)
-	if string.sub(attacker:GetClass(), 1, 7 ) == "weapon_" then
-		printinfo(attacker:GetClass())
+function getDamageCause(dmginfo)
+	if string.sub(dmginfo:GetAttacker():GetActiveWeapon():GetClass(), 1, 7 ) == "weapon_" and dmginfo:IsDamageType(2) or dmginfo:IsDamageType(128) then
+		printinfo(dmginfo:GetAttacker():GetActiveWeapon():GetClass() .. " " .. dmginfo:GetDamage())
 	else
-		printinfo("Unrecognized Weapon: " .. attacker:GetClass())
+		printinfo("Unrecognized Weapon: " .. dmginfo:GetInflictor():GetClass() .. " " .. dmginfo:GetDamage())
 	end
 end
 --Hooks

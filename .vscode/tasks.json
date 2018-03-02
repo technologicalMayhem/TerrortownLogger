@@ -4,27 +4,27 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Update Addon",
+            "label": "Upload Addon to Workshop",
             "type": "shell",
-            "command": ".\\toolbox\\updateAddon.ps1",
-            "group": "build"
+            "command": ".\\toolbox\\uploadToWorkshop.bat",
+            "group": "test"
         },
         {
             "label": "Configure Toolbox",
             "type": "shell",
-            "command": ".\\toolbox\\setup.ps1",
-            "group": "none"
+            "command": ".\\toolbox\\setup.bat",
+            "group": "test"
         },
         {
             "label": "Test Addon",
             "type": "shell",
-            "command": ".\\toolbox\\updateAddon.ps1",
+            "command": ".\\toolbox\\uploadTest.bat",
             "group": "test"
         },
         {
             "label": "Connect to Server",
             "type": "shell",
-            "command": ".\\toolbox\\connect.ps1",
+            "command": ".\\toolbox\\connect.bat",
             "group": "test"
         }
     ]
