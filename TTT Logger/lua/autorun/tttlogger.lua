@@ -50,14 +50,15 @@ function GM:PlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 end
 function GM:EntityTakeDamage ( target, dmginfo )
 	if matchinprogress and target:IsPlayer() then
-		if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
-			playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
-		end
-		getDamageCause(dmginfo)
-		if dmginfo:GetDamage() != 0 then
-			addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
-		elseif dmginfo:GetInflictor():IsWorld() then
-			addtolog( "<TakeDamageWorld>The world dealt [" .. math.Round( dmginfo:GetDamage() ) .. "][" .. damagetypes[dmginfo:GetDamageType()] .. "] damage to " .. getPlayerInfo(target) .. "\n" )
+		if target:Alive() then
+			if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
+				playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
+			end
+			if dmginfo:GetDamage() != 0 then
+				addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
+			elseif dmginfo:GetInflictor():IsWorld() then
+				addtolog( "<TakeDamageWorld>The world dealt [" .. math.Round( dmginfo:GetDamage() ) .. "][" .. damagetypes[dmginfo:GetDamageType()] .. "] damage to " .. getPlayerInfo(target) .. "\n" )
+			end
 		end
 	end
 end
@@ -116,13 +117,6 @@ function updatetimesstamp()
 		file.CreateDir( "tttlogger/" .. loddate )
 	end
 	LogFile = "tttlogger/" .. loddate .. "/" .. logtime .. ".txt"
-end
-function getDamageCause(dmginfo)
-	if string.sub(dmginfo:GetAttacker():GetActiveWeapon():GetClass(), 1, 7 ) == "weapon_" and dmginfo:IsDamageType(2) or dmginfo:IsDamageType(128) then
-		printinfo(dmginfo:GetAttacker():GetActiveWeapon():GetClass() .. " " .. dmginfo:GetDamage())
-	else
-		printinfo("Unrecognized Weapon: " .. dmginfo:GetInflictor():GetClass() .. " " .. dmginfo:GetDamage())
-	end
 end
 --Hooks
 hook.Add( "TTTBeginRound", "TTTLoggerBeginRound", onBeginRound )
