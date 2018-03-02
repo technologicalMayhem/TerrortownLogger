@@ -1,0 +1,31 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Upload Addon to Workshop",
+            "type": "shell",
+            "command": ".\\toolbox\\uploadToWorkshop.bat",
+            "group": "test"
+        },
+        {
+            "label": "Configure Toolbox",
+            "type": "shell",
+            "command": ".\\toolbox\\setup.bat",
+            "group": "test"
+        },
+        {
+            "label": "Test Addon",
+            "type": "shell",
+            "command": ".\\toolbox\\uploadTest.bat",
+            "group": "test"
+        },
+        {
+            "label": "Connect to Server",
+            "type": "shell",
+            "command": ".\\toolbox\\connect.bat",
+            "group": "test"
+        }
+    ]
+}

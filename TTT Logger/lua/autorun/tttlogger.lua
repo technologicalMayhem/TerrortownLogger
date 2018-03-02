@@ -12,7 +12,9 @@ local matchinprogress = false
 local LogFile = "TTTLogger/TTTLog/missingtimestamp.txt"
 local RoundTime = 0
 --Functions
-if ~game.IsDedicated() and engine.ActiveGamemode() ~= "terrortown" then
+if game.IsDedicated() and engine.ActiveGamemode() == "terrortown" then
+	GetConVar("tttlogger_enabled"):SetString("1")
+else
 	GetConVar("tttlogger_enabled"):SetString("0")
 end
 local function onBeginRound()
@@ -27,7 +29,7 @@ local function onBeginRound()
 			addtolog( "<PlayerInfo>" .. getPlayerInfo(ply) .. "[" .. boolstring[ply:IsSpec()] .. "][" .. math.Round(ply:GetBaseKarma()) .. "]\n" )
 		end
 	else
-		printinfo( HUD_PRINTTALK, "Round tracking aborted. Not enough players." )
+		printinfo( "Round tracking aborted. Not enough players." )
 	end
 end
 local function onTTTOrderedEquipment( ply, equipment, is_item)
@@ -48,13 +50,15 @@ function GM:PlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 end
 function GM:EntityTakeDamage ( target, dmginfo )
 	if matchinprogress and target:IsPlayer() then
-		if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
-			playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
-		end
-		if dmginfo:GetDamage() != 0 then
-			addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
-		elseif dmginfo:GetInflictor():IsWorld() then
-			addtolog( "<TakeDamageWorld>The world dealt [" .. math.Round( dmginfo:GetDamage() ) .. "][" .. damagetypes[dmginfo:GetDamageType()] .. "] damage to " .. getPlayerInfo(target) .. "\n" )
+		if target:Alive() then
+			if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
+				playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
+			end
+			if dmginfo:GetDamage() != 0 then
+				addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
+			elseif dmginfo:GetInflictor():IsWorld() then
+				addtolog( "<TakeDamageWorld>The world dealt [" .. math.Round( dmginfo:GetDamage() ) .. "][" .. damagetypes[dmginfo:GetDamageType()] .. "] damage to " .. getPlayerInfo(target) .. "\n" )
+			end
 		end
 	end
 end
@@ -114,7 +118,6 @@ function updatetimesstamp()
 	end
 	LogFile = "tttlogger/" .. loddate .. "/" .. logtime .. ".txt"
 end
-
 --Hooks
 hook.Add( "TTTBeginRound", "TTTLoggerBeginRound", onBeginRound )
 hook.Add( "TTTOrderedEquipment", "tttloggerTTTOrderedEquipment", onTTTOrderedEquipment )
