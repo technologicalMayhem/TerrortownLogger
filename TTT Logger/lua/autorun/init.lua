@@ -12,7 +12,9 @@ local matchinprogress = false
 local LogFile = "TTTLogger/TTTLog/missingtimestamp.txt"
 local RoundTime = 0
 --Functions
-if ~game.IsDedicated() and engine.ActiveGamemode() ~= "terrortown" then
+if game.IsDedicated() and engine.ActiveGamemode() == "terrortown" then
+	GetConVar("tttlogger_enabled"):SetString("1")
+else
 	GetConVar("tttlogger_enabled"):SetString("0")
 end
 local function onBeginRound()
@@ -27,7 +29,7 @@ local function onBeginRound()
 			addtolog( "<PlayerInfo>" .. getPlayerInfo(ply) .. "[" .. boolstring[ply:IsSpec()] .. "][" .. math.Round(ply:GetBaseKarma()) .. "]\n" )
 		end
 	else
-		printinfo( HUD_PRINTTALK, "Round tracking aborted. Not enough players." )
+		printinfo( "Round tracking aborted. Not enough players." )
 	end
 end
 local function onTTTOrderedEquipment( ply, equipment, is_item)
@@ -51,7 +53,7 @@ function GM:EntityTakeDamage ( target, dmginfo )
 		if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
 			playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
 		end
-		getDamageCause(dmginfo:GetAttacker(), dmginfo:GetInflictor())
+		--getDamageCause(dmginfo:GetAttacker(), dmginfo:GetInflictor())
 		if dmginfo:GetDamage() != 0 then
 			addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
 		elseif dmginfo:GetInflictor():IsWorld() then
@@ -116,10 +118,10 @@ function updatetimesstamp()
 	LogFile = "tttlogger/" .. loddate .. "/" .. logtime .. ".txt"
 end
 function getDamageCause(attacker, inflictor)
-	if string.sub( inflictor:GetClass(), 1, 7 ) == "weapon_" then
-		printinfo(inflictor:GetClass())
+	if string.sub(attacker:GetClass(), 1, 7 ) == "weapon_" then
+		printinfo(attacker:GetClass())
 	else
-		printinfo("Unrecognized Weapon: " .. inflictor:GetClass)
+		printinfo("Unrecognized Weapon: " .. attacker:GetClass())
 	end
 end
 --Hooks

@@ -20,6 +20,12 @@
             "type": "shell",
             "command": ".\\toolbox\\updateAddon.ps1",
             "group": "test"
+        },
+        {
+            "label": "Connect to Server",
+            "type": "shell",
+            "command": ".\\toolbox\\connect.ps1",
+            "group": "test"
         }
     ]
 }
