@@ -2,7 +2,6 @@
 CreateConVar("tttlogger_enabled", 0, 256, "Enables the TTTLogger.")
 CreateConVar("tttlogger_debug", 0, 256, "Enables Debug Mode.")
 --Vars
-local GM = GAMEMODE
 local Timestamp = os.time()
 local FileTimeString = os.date( "%Y-%m-%d - %H-%M-%S" , Timestamp )
 local damagetypes = {[1]="DMG_CRUSH",[2]="DMG_BULLET",[4]="DMG_SLASH",[8]="DMG_BURN",[16]="DMG_VEHICLE",[32]="DMG_FALL",[64]="DMG_BLAST",[128]="DMG_CLUB",[16384]="DMG_DROWN"}
@@ -39,7 +38,7 @@ local function onTTTOrderedEquipment( ply, equipment, is_item)
 		addtolog( "<TTTOrderedWeapon>" .. getPlayerInfo(ply) .. " has bought weapon [" .. equipment .. "]\n" )
 	end
 end
-function GM:PlayerDeath( victim, inflictor, attacker )  -- Kill Handling
+function onPlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 	if matchinprogress then
 		if ( attacker:IsWorld() ) then
 			addtolog( "<PlayerDeathWorld>" .. getPlayerInfo(victim) .. " was killed by the World. The cause was [" .. playerlastdamage[victim:SteamID()] .. "]\n" )
@@ -48,7 +47,7 @@ function GM:PlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 		end
 	end
 end
-function GM:EntityTakeDamage ( target, dmginfo )
+function onEntityTakeDamage ( target, dmginfo )
 	if matchinprogress and target:IsPlayer() then
 		if target:Alive() then
 			if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
@@ -119,6 +118,8 @@ function updatetimesstamp()
 	LogFile = "tttlogger/" .. loddate .. "/" .. logtime .. ".txt"
 end
 --Hooks
-hook.Add( "TTTBeginRound", "TTTLoggerBeginRound", onBeginRound )
+hook.Add( "TTTBeginRound", "tttloggerBeginRound", onBeginRound )
 hook.Add( "TTTOrderedEquipment", "tttloggerTTTOrderedEquipment", onTTTOrderedEquipment )
-hook.Add( "TTTEndRound", "TTTLoggerBeginRound", onTTTEndRound )
+hook.Add( "TTTEndRound", "tttloggerBeginRound", onTTTEndRound )
+hook.Add( "PlayerDeath", "tttloggerPlayerDeath", onPlayerDeath )
+hook.Add( "EntityTakeDamage", "tttloggerEntityTakeDamage", onEntityTakeDamage )
