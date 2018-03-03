@@ -1,6 +1,7 @@
 --ConVars
 CreateConVar("tttlogger_enabled", 1, 256, "Enables the TTTLogger.")
 CreateConVar("tttlogger_debug", 0, 256, "Enables Debug Mode.")
+CreateConVar("tttlogger_debug_printtochat", 0, 256, "Prints to chat instead of log.")
 --Vars
 local Timestamp = os.time()
 local FileTimeString = os.date( "%Y-%m-%d - %H-%M-%S" , Timestamp )
@@ -83,7 +84,7 @@ function tableHasKey(table,key)
     return table[key] ~= nil
 end
 function addtolog( message )
-	if GetConVar( "tttlogger_debug"):GetBool() then
+	if GetConVar( "tttlogger_debug_printtochat"):GetBool() then
 		print ( message )
 		PrintMessage ( HUD_PRINTTALK, message )
 	else
