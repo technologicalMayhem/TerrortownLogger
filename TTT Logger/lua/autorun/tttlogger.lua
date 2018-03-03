@@ -1,5 +1,5 @@
 --ConVars
-CreateConVar("tttlogger_enabled", 0, 256, "Enables the TTTLogger.")
+CreateConVar("tttlogger_enabled", 1, 256, "Enables the TTTLogger.")
 CreateConVar("tttlogger_debug", 0, 256, "Enables Debug Mode.")
 --Vars
 local Timestamp = os.time()
@@ -17,7 +17,7 @@ else
 	GetConVar("tttlogger_enabled"):SetString("0")
 end
 local function onBeginRound()
-	if countactiveplayers() > 2 and GetConVar( "tttlogger_enabled"):GetInt() == 1 or GetConVar( "tttlogger_debug"):GetInt() == 1 and GetConVar( "tttlogger_enabled"):GetInt() == 1 then
+	if (SERVER) and countactiveplayers() > 2 and GetConVar( "tttlogger_enabled"):GetInt() == 1 or GetConVar( "tttlogger_debug"):GetInt() == 1 and GetConVar( "tttlogger_enabled"):GetInt() == 1 then
 		matchinprogress = true
 		RoundTime = CurTime()
 		updatetimesstamp()
@@ -27,7 +27,7 @@ local function onBeginRound()
 		for k, ply in pairs(player.GetAll()) do
 			addtolog( "<PlayerInfo>" .. getPlayerInfo(ply) .. "[" .. boolstring[ply:IsSpec()] .. "][" .. math.Round(ply:GetBaseKarma()) .. "]\n" )
 		end
-	else
+	elseif (SERVER) then
 		printinfo( "Round tracking aborted. Not enough players." )
 	end
 end
