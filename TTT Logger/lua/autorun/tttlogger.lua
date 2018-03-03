@@ -93,7 +93,7 @@ function addtolog( message )
 end
 function getPlayerInfo(ply)
 	if ply:IsPlayer() then
-		return ply:Name() .. "[" .. ply:SteamID() .. "][" .. ply:GetRoleString() .. "]"
+		return ply:Name() .. "[" .. ply:SteamID64() .. "][" .. ply:GetRoleString() .. "]"
 	else
 		return "[Error, not a player it was" .. ply:GetClass() .. "]"
 	end
