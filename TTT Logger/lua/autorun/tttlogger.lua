@@ -24,7 +24,7 @@ local function onBeginRound()
 		updatetimesstamp()
 		PrintMessage( HUD_PRINTTALK, "Round tracking is enabled for this round." )
 		print( "Round tracking has started. Log File: " .. LogFile )
-		addtolog( LogFile, "Timestamp: [" .. Timestamp .. "]\nMap: [" .. game.GetMap() .. "]\n")
+		addtolog( "Timestamp: [" .. Timestamp .. "]\nMap: [" .. game.GetMap() .. "]\n")
 		for k, ply in pairs(player.GetAll()) do
 			addtolog( "<PlayerInfo>" .. getPlayerInfo(ply) .. "[" .. boolstring[ply:IsSpec()] .. "][" .. math.Round(ply:GetBaseKarma()) .. "]\n" )
 		end
