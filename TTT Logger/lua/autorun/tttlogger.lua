@@ -44,7 +44,7 @@ function onPlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 		if ( attacker:IsWorld() ) then
 			addtolog( "<PlayerDeathWorld>" .. getPlayerInfo(victim) .. " was killed by the World. The cause was [" .. playerlastdamage[victim:SteamID()] .. "]\n" )
 		else
-			addtolog( "<PlayerKilled>" .. getPlayerInfo(victim) .. " was killed by " .. getPlayerInfo(attacker) .. "]\n" )
+			addtolog( "<PlayerKilled>" .. getPlayerInfo(victim) .. " was killed by " .. getPlayerInfo(attacker) .. "\n" )
 		end
 	end
 end
