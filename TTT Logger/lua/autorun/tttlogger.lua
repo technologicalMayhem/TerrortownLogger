@@ -55,7 +55,7 @@ function onEntityTakeDamage ( target, dmginfo )
 				playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
 			end
 			if dmginfo:GetDamage() != 0 then
-				addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to [" .. getPlayerInfo(target) .. "]\n" )
+				addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to " .. getPlayerInfo(target) .. "\n" )
 			elseif dmginfo:GetInflictor():IsWorld() then
 				addtolog( "<TakeDamageWorld>The world dealt [" .. math.Round( dmginfo:GetDamage() ) .. "][" .. damagetypes[dmginfo:GetDamageType()] .. "] damage to " .. getPlayerInfo(target) .. "\n" )
 			end
