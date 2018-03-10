@@ -8,6 +8,7 @@ local FileTimeString = os.date( "%Y-%m-%d - %H-%M-%S" , Timestamp )
 local damagetypes = {[1]="DMG_CRUSH",[2]="DMG_BULLET",[4]="DMG_SLASH",[8]="DMG_BURN",[16]="DMG_VEHICLE",[32]="DMG_FALL",[64]="DMG_BLAST",[128]="DMG_CLUB",[16384]="DMG_DROWN"}
 local boolstring = {[false]="false", [true]="true"}
 local playerlastdamage = {}
+local playerhealth = {}
 local matchinprogress = false
 local LogFile = "TTTLogger/TTTLog/missingtimestamp.txt"
 local RoundTime = 0
@@ -27,6 +28,7 @@ local function onBeginRound()
 		addtolog( "Timestamp: [" .. Timestamp .. "]\nMap: [" .. game.GetMap() .. "]\n")
 		for k, ply in pairs(player.GetAll()) do
 			addtolog( "<PlayerInfo>" .. getPlayerInfo(ply) .. "[" .. boolstring[ply:IsSpec()] .. "][" .. math.Round(ply:GetBaseKarma()) .. "]\n" )
+			setHealth(ply)
 		end
 	elseif (SERVER) then
 		printinfo( "Round tracking aborted. Not enough players." )
@@ -41,8 +43,8 @@ local function onTTTOrderedEquipment( ply, equipment, is_item)
 end
 function onPlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 	if matchinprogress then
-		if ( attacker:IsWorld() ) then
-			addtolog( "<PlayerDeathWorld>" .. getPlayerInfo(victim) .. " was killed by the World. The cause was [" .. playerlastdamage[victim:SteamID()] .. "]\n" )
+		if ( attacker:IsWorld() or attacker:GetClass() == "trigger_hurt" ) then
+			addtolog( "<PlayerDeathWorld>" .. getPlayerInfo(victim) .. " was killed by the World. The cause was [" .. playerlastdamage[victim:SteamID64()] .. "]\n" )
 		else
 			addtolog( "<PlayerKilled>" .. getPlayerInfo(victim) .. " was killed by " .. getPlayerInfo(attacker) .. "\n" )
 		end
@@ -52,15 +54,22 @@ function onEntityTakeDamage ( target, dmginfo )
 	if matchinprogress and target:IsPlayer() then
 		if target:Alive() then
 			if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
-				playerlastdamage[target:SteamID()] = damagetypes[dmginfo:GetDamageType()]
+				playerlastdamage[target:SteamID64()] = damagetypes[dmginfo:GetDamageType()]
+			else
+				playerlastdamage[target:SteamID64()] = "Unknown"
 			end
-			if dmginfo:GetDamage() != 0 then
-				addtolog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [" .. math.Round( dmginfo:GetDamage() ) .. "] damage to " .. getPlayerInfo(target) .. "\n" )
+			if dmginfo:GetDamage() != 0 and dmginfo:GetAttacker():IsPlayer() then
+				waitLog( "<TakeDamageWeapon>" .. getPlayerInfo( dmginfo:GetAttacker() ) .. " dealt [", target, "] damage by using [" .. getWeapon(dmginfo) .. "] to " .. getPlayerInfo(target) .. "\n" )
 			elseif dmginfo:GetInflictor():IsWorld() then
-				addtolog( "<TakeDamageWorld>The world dealt [" .. math.Round( dmginfo:GetDamage() ) .. "][" .. damagetypes[dmginfo:GetDamageType()] .. "] damage to " .. getPlayerInfo(target) .. "\n" )
+				waitLog( "<TakeDamageWorld>The world dealt [", target, "][" .. damagetypes[dmginfo:GetDamageType()] .. "] damage to " .. getPlayerInfo(target) .. "\n" )
 			end
 		end
 	end
+end
+function waitLog(part1, ply, part2)
+	timer.Simple(0.0001, function()
+		addtolog(part1 .. updateHealth(ply) .. part2)
+	end)
 end
 local function onTTTEndRound(result)
 	if matchinprogress then
@@ -74,6 +83,21 @@ local function onTTTEndRound(result)
 		end
 		addtolog( "<RoundTime> Round took [" .. math.Round(CurTime() - RoundTime, 2) .. "] seconds." )
 		printinfo("Round Tracking ended! Round Length: " .. string.ToMinutesSeconds(math.Round(CurTime() - RoundTime, 2)) .. "." )
+	end
+end
+function setHealth(ply)
+	playerhealth[ply:SteamID64()] = ply:Health()
+end
+function updateHealth(ply)
+	local diff = playerhealth[ply:SteamID64()] - ply:Health()
+	playerhealth[ply:SteamID64()] = ply:Health()
+	return diff
+end
+function getWeapon( dmginfo )
+	if(dmginfo:GetInflictor():IsPlayer()) then
+		return(dmginfo:GetInflictor():GetActiveWeapon():GetClass())
+	else
+		return(dmginfo:GetInflictor():GetClass())
 	end
 end
 function printinfo(message)
