@@ -2,6 +2,7 @@
 CreateConVar("tttlogger_enabled", 1, 256, "Enables the TTTLogger.")
 CreateConVar("tttlogger_debug", 0, 256, "Enables Debug Mode.")
 CreateConVar("tttlogger_debug_printtochat", 0, 256, "Prints to chat instead of log.")
+CreateConVar("tttlogger_min_players", 3, 256, "Minimum ammount of players needed for the Logger to work.")
 --Vars
 local Timestamp = os.time()
 local FileTimeString = os.date( "%Y-%m-%d - %H-%M-%S" , Timestamp )
@@ -13,19 +14,17 @@ local matchinprogress = false
 local LogFile = "TTTLogger/TTTLog/missingtimestamp.txt"
 local RoundTime = 0
 --Functions
-if game.IsDedicated() and engine.ActiveGamemode() == "terrortown" then
-	GetConVar("tttlogger_enabled"):SetString("1")
-else
+if not game.IsDedicated() and not engine.ActiveGamemode() == "terrortown" then
 	GetConVar("tttlogger_enabled"):SetString("0")
 end
 local function onBeginRound()
-	if (SERVER) and countactiveplayers() > 2 and GetConVar( "tttlogger_enabled"):GetInt() == 1 or GetConVar( "tttlogger_debug"):GetInt() == 1 and GetConVar( "tttlogger_enabled"):GetInt() == 1 then
+	if (SERVER) and countactiveplayers() > GetConVar( "tttlogger_min_players"):GetInt() and GetConVar( "tttlogger_enabled"):GetInt() == 1 or GetConVar( "tttlogger_debug"):GetInt() == 1 and GetConVar( "tttlogger_enabled"):GetInt() == 1 then
 		matchinprogress = true
 		RoundTime = CurTime()
 		updatetimesstamp()
 		PrintMessage( HUD_PRINTTALK, "Round tracking is enabled for this round." )
 		print( "Round tracking has started. Log File: " .. LogFile )
-		addtolog( "Timestamp: [" .. Timestamp .. "]\nMap: [" .. game.GetMap() .. "]\n")
+		addtolog( "<Timestamp> [" .. Timestamp .. "]\n<Map> [" .. game.GetMap() .. "]\n")
 		for k, ply in pairs(player.GetAll()) do
 			addtolog( "<PlayerInfo>" .. getPlayerInfo(ply) .. "[" .. boolstring[ply:IsSpec()] .. "][" .. math.Round(ply:GetBaseKarma()) .. "]\n" )
 			setHealth(ply)
