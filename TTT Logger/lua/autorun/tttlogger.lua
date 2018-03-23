@@ -40,7 +40,7 @@ local function onTTTOrderedEquipment( ply, equipment, is_item)
 		addtolog( "<TTTOrderedWeapon>" .. getPlayerInfo(ply) .. " has bought weapon [" .. equipment .. "]\n" )
 	end
 end
-function onPlayerDeath( victim, inflictor, attacker )  -- Kill Handling
+local function onPlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 	if matchinprogress then
 		if ( attacker:IsWorld() or attacker:GetClass() == "trigger_hurt" ) then
 			addtolog( "<PlayerDeathWorld>" .. getPlayerInfo(victim) .. " was killed by the World. The cause was [" .. playerlastdamage[victim:SteamID64()] .. "]\n" )
@@ -49,7 +49,7 @@ function onPlayerDeath( victim, inflictor, attacker )  -- Kill Handling
 		end
 	end
 end
-function onEntityTakeDamage ( target, dmginfo )
+local function onEntityTakeDamage ( target, dmginfo )
 	if matchinprogress and target:IsPlayer() then
 		if target:Alive() then
 			if tableHasKey( damagetypes, dmginfo:GetDamageType() ) then
@@ -65,11 +65,6 @@ function onEntityTakeDamage ( target, dmginfo )
 		end
 	end
 end
-function waitLog(part1, ply, part2)
-	timer.Simple(0.0001, function()
-		addtolog(part1 .. updateHealth(ply) .. part2)
-	end)
-end
 local function onTTTEndRound(result)
 	if matchinprogress then
 		matchinprogress = false
@@ -80,9 +75,17 @@ local function onTTTEndRound(result)
 		elseif result == WIN_TIMELIMIT then
 			addtolog( "<EndRound> The [Time] has run up! The Innocent win!\n" )
 		end
+		for k, ply in pairs(player.GetAll()) do
+			addtolog( "<PlayerInfoEnd>" .. getPlayerInfo(ply) .. "[" .. boolstring[ply:Alive()] .. "]\n" )
+		end
 		addtolog( "<RoundTime> Round took [" .. math.Round(CurTime() - RoundTime, 2) .. "] seconds." )
 		printinfo("Round Tracking ended! Round Length: " .. string.ToMinutesSeconds(math.Round(CurTime() - RoundTime, 2)) .. "." )
 	end
+end
+function waitLog(part1, ply, part2)
+	timer.Simple(0.0001, function()
+		addtolog(part1 .. updateHealth(ply) .. part2)
+	end)
 end
 function setHealth(ply)
 	playerhealth[ply:SteamID64()] = ply:Health()
